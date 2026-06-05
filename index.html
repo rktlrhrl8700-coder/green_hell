@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>그린 헬 공략 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<style>
+:root {
+  --bg: #0e1a12;
+  --bg2: #152018;
+  --bg3: #1c2a1f;
+  --surface: #1e2d22;
+  --surface2: #253329;
+  --border: rgba(80,160,80,0.18);
+  --border2: rgba(80,160,80,0.32);
+  --green: #4caf6e;
+  --green2: #2e7d4f;
+  --green-dim: rgba(76,175,110,0.12);
+  --red: #e05555;
+  --red-dim: rgba(224,85,85,0.12);
+  --amber: #e6a030;
+  --amber-dim: rgba(230,160,48,0.12);
+  --text: #d9edd4;
+  --text2: #8aab88;
+  --text3: #5a7558;
+  --danger: #e05555;
+  --caution: #e6a030;
+  --mild: #4caf6e;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0;padding:0 16px;}
+.nav-logo{display:flex;align-items:center;gap:8px;padding:14px 12px 14px 0;border-right:1px solid var(--border);margin-right:4px;}
+.nav-logo-icon{width:30px;height:30px;background:var(--green2);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;}
+.nav-logo-icon i{color:#fff;font-size:16px;}
+.nav-logo-text{font-size:15px;font-weight:700;color:var(--text);}
+.nav-tabs{display:flex;gap:0;}
+.nav-tab{padding:14px 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green);}
+.nav-tab:hover{color:var(--text2);}
+
+/* ── LAYOUT ── */
+.page{display:none;padding:20px 16px 40px;max-width:800px;margin:0 auto;}
+.page.active{display:block;}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative;margin-bottom:16px;}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text3);pointer-events:none;}
+.search-wrap input{width:100%;padding:10px 12px 10px 38px;font-size:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;outline:none;}
+.search-wrap input:focus{border-color:var(--border2);}
+.search-wrap input::placeholder{color:var(--text3);}
+
+/* ── FILTER TABS ── */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.ftab{padding:5px 12px;font-size:11px;font-weight:500;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;font-family:inherit;}
+.ftab.active{background:var(--green2);border-color:var(--green2);color:#fff;}
+.ftab:hover:not(.active){border-color:var(--border2);color:var(--text2);}
+
+/* ── COUNT ── */
+.count-line{font-size:11px;color:var(--text3);margin-bottom:10px;}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px;}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer;transition:border-color .15s,background .15s;}
+.card:hover{border-color:var(--border2);background:var(--surface2);}
+.card-top{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+.badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;white-space:nowrap;}
+/* craft badges */
+.b-basic{background:rgba(76,175,110,.15);color:#4caf6e;}
+.b-blade{background:rgba(224,85,85,.15);color:#e07070;}
+.b-axe{background:rgba(230,160,48,.15);color:#e6a030;}
+.b-spear{background:rgba(230,130,60,.15);color:#e68040;}
+.b-ranged{background:rgba(130,100,220,.15);color:#a080e0;}
+.b-bandage{background:rgba(200,100,150,.15);color:#e090b0;}
+.b-armor{background:rgba(60,140,200,.15);color:#60a0d0;}
+.b-tool{background:rgba(76,175,110,.15);color:#6abf88;}
+/* food */
+.b-food{background:rgba(76,175,110,.15);color:#4caf6e;}
+.safe-b{background:rgba(76,175,110,.15);color:#4caf6e;}
+.caution-b{background:rgba(230,160,48,.15);color:#e6a030;}
+.danger-b{background:rgba(224,85,85,.15);color:#e05555;}
+/* status */
+.b-status-danger{background:rgba(224,85,85,.15);color:#e05555;}
+.b-status-caution{background:rgba(230,160,48,.15);color:#e6a030;}
+.b-status-mild{background:rgba(76,175,110,.15);color:#4caf6e;}
+
+.tier-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-left:auto;}
+.t-early{background:#4caf6e;}
+.t-mid{background:#e6a030;}
+.t-late{background:#e05555;}
+.card-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.card-sub{font-size:11px;color:var(--text3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+/* ── STATUS CARD ── */
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:border-color .15s;}
+.scard:hover{border-color:var(--border2);}
+.scard[data-sev="danger"]{border-top:2px solid var(--danger);}
+.scard[data-sev="caution"]{border-top:2px solid var(--caution);}
+.scard[data-sev="mild"]{border-top:2px solid var(--mild);}
+.scard-icon{height:52px;display:flex;align-items:center;padding:0 12px;gap:10px;}
+.scard-icon[data-sev="danger"]{background:rgba(224,85,85,.1);}
+.scard-icon[data-sev="caution"]{background:rgba(230,160,48,.1);}
+.scard-icon[data-sev="mild"]{background:rgba(76,175,110,.1);}
+.scard-icon svg{width:28px;height:28px;flex-shrink:0;}
+.scard-icon-label{font-size:10px;font-weight:500;}
+.scard-icon[data-sev="danger"] .scard-icon-label{color:#e05555;}
+.scard-icon[data-sev="caution"] .scard-icon-label{color:#e6a030;}
+.scard-icon[data-sev="mild"] .scard-icon-label{color:#4caf6e;}
+.scard-body{padding:10px 12px 12px;}
+.scard-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.scard-cause{font-size:11px;color:var(--text3);margin-bottom:5px;line-height:1.4;}
+.scard-treat{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);}
+.scard-treat i{font-size:12px;color:var(--green);}
+
+/* ── DETAIL ── */
+.detail{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
+.detail.open{display:block;}
+.detail-hero{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);margin-bottom:14px;}
+.detail-hero[data-sev="danger"]{background:rgba(224,85,85,.1);}
+.detail-hero[data-sev="caution"]{background:rgba(230,160,48,.1);}
+.detail-hero[data-sev="mild"]{background:rgba(76,175,110,.1);}
+.detail-hero svg{width:40px;height:40px;flex-shrink:0;}
+.back-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);cursor:pointer;background:none;border:none;margin-bottom:12px;font-family:inherit;}
+.back-btn:hover{color:var(--text2);}
+.d-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.d-desc{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:4px;}
+.divider{height:1px;background:var(--border);margin:10px 0;}
+.dlabel{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 7px;}
+.mats{display:flex;flex-wrap:wrap;gap:6px;}
+.mat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-size:12px;color:var(--text2);}
+.eff-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.5;margin-bottom:5px;}
+.eff-row i{font-size:14px;color:var(--green);flex-shrink:0;margin-top:2px;}
+.eff-row.bad i{color:var(--red);}
+.tip-box{background:var(--bg3);border-left:3px solid var(--green2);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:9px 12px;font-size:12px;color:var(--text2);margin-top:12px;line-height:1.65;}
+.empty{text-align:center;padding:3rem;color:var(--text3);font-size:14px;}
+.empty i{font-size:32px;display:block;margin-bottom:8px;opacity:.5;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:500px){
+  .nav-tab{padding:12px 10px;font-size:12px;}
+  .page{padding:14px 12px 40px;}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon"><i class="ti ti-leaf"></i></div>
+    <span class="nav-logo-text">그린 헬</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('craft',this)">⚒ 조합법</button>
+    <button class="nav-tab" onclick="showPage('food',this)">🌿 음식</button>
+    <button class="nav-tab" onclick="showPage('status',this)">🩹 상태이상</button>
+  </div>
+</nav>
+
+<!-- ════ 조합법 ════ -->
+<div id="page-craft" class="page active">
+  <div class="search-wrap">
+    <i class="ti ti-search"></i>
+    <input id="craft-search" type="text" placeholder="아이템 이름, 재료 검색..." oninput="renderCraft()"/>
+  </div>
+  <div class="filter-row" id="craft-filters"></div>
+  <div id="craft-count" class="count-line"></div>
+  <div id="craft-list"></div>
+  <div id="craft-detail" class="detail"></div>
+</div>
+
+<!-- ════ 음식 ════ -->
+<div id="page-food" class="page">
+  <div class="search-wrap">
+    <i class="ti ti-search"></i>
+    <input id="food-search" type="text" placeholder="음식 이름, 효과 검색..." oninput="renderFood()"/>
+  </div>
+  <div class="filter-row" id="food-filters"></div>
+  <div id="food-count" class="count-line"></div>
+  <div id="food-list"></div>
+  <div id="food-detail" class="detail"></div>
+</div>
+
+<!-- ════ 상태이상 ════ -->
+<div id="page-status" class="page">
+  <div class="search-wrap">
+    <i class="ti ti-search"></i>
+    <input id="status-search" type="text" placeholder="증상, 치료법 검색..." oninput="renderStatus()"/>
+  </div>
+  <div class="filter-row" id="status-filters"></div>
+  <div id="status-count" class="count-line"></div>
+  <div id="status-list"></div>
+  <div id="status-detail" class="detail"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const CRAFT_CATS={basic:'기본',blade:'칼',axe:'도끼',spear:'창',ranged:'원거리',bandage:'붕대',armor:'방어구',tool:'도구'};
+const CRAFT_CLS={basic:'b-basic',blade:'b-blade',axe:'b-axe',spear:'b-spear',ranged:'b-ranged',bandage:'b-bandage',armor:'b-armor',tool:'b-tool'};
+const TIER={early:'초반',mid:'중반',late:'후반'};
+
+const CRAFT=[
+  {id:1,cat:'basic',tier:'early',name:'몰리네리아 붕대',mats:['몰리네리아 잎 ×1'],effects:['찰과상 기본 치료'],tip:'뜯자마자 현장에서 바로 붕대로 만드세요. 한 번에 3장씩 수확됩니다.',desc:'튜토리얼에서 처음 배우는 기본 붕대. 다른 재료와 조합해 강화 붕대로 업그레이드 가능.'},
+  {id:2,cat:'basic',tier:'early',name:'밧줄',mats:['리아나 줄기 수집'],effects:['다수 조합법의 핵심 재료'],tip:'한 번에 10개씩 쌓이지만 줍는 데 2~3초 걸려요. 미리 넉넉히 확보하세요.',desc:'조합의 기본 재료. 리아나 나무 덩굴을 수집하거나 벌목 나무에서도 획득 가능.'},
+  {id:3,cat:'basic',tier:'early',name:'코코넛 수통',mats:['코코넛 ×1','밧줄 ×1'],effects:['물 40 저장 가능','이동 중 수분 확보'],tip:'서바이벌 모드에선 코코넛 껍질을 빗물 집수 용도로 쓰는 게 더 실용적. 스토리 모드 초반엔 필수.',desc:'코코넛 껍질로 만드는 초기 물통.'},
+  {id:4,cat:'basic',tier:'early',name:'핸드 드릴',mats:['나뭇가지 ×1','작은 나뭇가지 ×1'],effects:['마찰로 불 피우기 가능'],tip:'비가 오면 사용 불가하니 불씨를 미리 확보해두세요.',desc:'마찰로 불을 피우는 원시 점화 도구.'},
+  {id:5,cat:'basic',tier:'mid',name:'보우 드릴',mats:['활 ×1','판자 ×1','돌 ×1','작은 나뭇가지 ×1'],effects:['불 피우기 속도 향상'],tip:'핸드 드릴보다 훨씬 빠르게 불을 피울 수 있어요. 중반 이후 필수 도구.',desc:'활을 이용한 고급 점화 도구.'},
+  {id:6,cat:'basic',tier:'mid',name:'부족 부싯돌',mats:['나뭇가지 ×2','밧줄 ×2'],effects:['가장 빠른 점화'],tip:'스토리 모드에서는 캐릭터가 직접 관찰해야 제작 가능.',desc:'부족 방식의 점화 도구. 불 피우는 속도가 가장 빠름.'},
+  {id:7,cat:'basic',tier:'early',name:'코코넛 그릇',mats:['코코넛 ×1'],effects:['물 끓이기 가능','음식 조리 용기'],tip:'초반에 물 끓이는 가장 쉬운 방법. 코코넛 껍질은 버리지 마세요.',desc:'코코넛 반쪽으로 만드는 그릇.'},
+  {id:8,cat:'basic',tier:'early',name:'낚싯대',mats:['긴 나뭇가지 ×1','밧줄 ×1','낚시 바늘 ×1'],effects:['물고기 낚시 가능'],tip:'낚시 바늘(뼈+돌 칼)을 먼저 만들어야 합니다.',desc:'낚시 도구. 강·호수에서 단백질 안정적 확보 가능.'},
+  {id:9,cat:'basic',tier:'early',name:'낚시 바늘',mats:['뼈 ×1 (돌 칼로 가공)'],effects:['낚싯대에 장착'],tip:'뼈를 돌 칼로 가공하면 됩니다.',desc:'뼈를 가공해 만드는 낚시 바늘.'},
+  {id:10,cat:'blade',tier:'early',name:'돌 칼',mats:['날카로운 돌 ×2'],effects:['시체 해체 가능','칼 전용 슬롯 장착'],tip:'날카로운 돌은 큰 돌을 다른 돌로 내려치면 획득. 시체 해체 필수.',desc:'가장 기본적인 칼. 시체 해체 필수 아이템.'},
+  {id:11,cat:'blade',tier:'mid',name:'나뭇가지 칼',mats:['날카로운 돌 ×1','작은 나뭇가지 ×1','밧줄 ×1'],effects:['돌 칼보다 내구도 향상'],tip:'자원 여유 있을 때 업그레이드.',desc:'나뭇가지 손잡이를 추가한 강화 칼.'},
+  {id:12,cat:'blade',tier:'mid',name:'뼈 칼',mats:['뼈 ×1','작은 나뭇가지 ×1','밧줄 ×1'],effects:['가성비 좋은 중반 칼'],tip:'뼈 재료 시리즈의 시작.',desc:'동물 뼈로 만드는 칼.'},
+  {id:13,cat:'blade',tier:'late',name:'흑요석 칼',mats:['흑요석 ×1','돌 ×1','밧줄 ×1'],effects:['강력한 공격력'],tip:'희귀하므로 원주민에게서 노획하는 편이 효율적.',desc:'흑요석으로 만드는 고급 칼.'},
+  {id:14,cat:'blade',tier:'late',name:'금속 칼',mats:['금속 칼 주물 ×1','밧줄 ×1'],effects:['최고 내구도','금속 창 제작 선행'],tip:'주로 금속 창 재료로 활용.',desc:'금속 제련 최고급 칼.'},
+  {id:15,cat:'axe',tier:'early',name:'돌 도끼',mats:['돌 ×1','나뭇가지 ×1'],effects:['나무 벌목','근접 무기'],tip:'밧줄 없이 즉시 제작. 초반 필수.',desc:'초반 필수 도끼. 나무 채집과 근접 전투 겸용.'},
+  {id:16,cat:'axe',tier:'mid',name:'뼈 도끼',mats:['뼈 ×1','나뭇가지 ×1','밧줄 ×1'],effects:['돌 도끼보다 내구도 향상'],tip:'뼈 확보 후 자연스럽게 업그레이드.',desc:'뼈로 만드는 도끼.'},
+  {id:17,cat:'axe',tier:'late',name:'흑요석 도끼',mats:['흑요석 ×1','나뭇가지 ×1','밧줄 ×1'],effects:['강력한 벌목·전투 성능'],tip:'아마조니아 혼령 이후 흑요석 수급이 줄어 제작이 까다로움.',desc:'흑요석을 이용한 고급 도끼.'},
+  {id:18,cat:'axe',tier:'late',name:'금속 도끼',mats:['금속 도끼 주물 ×1','나뭇가지 ×1','밧줄 ×1'],effects:['최강 벌목·전투력'],tip:'금속 제련이 가능해지면 우선적으로 제작 추천.',desc:'금속으로 만드는 최고급 도끼.'},
+  {id:19,cat:'axe',tier:'late',name:'아즈텍 도끼',mats:['판자 ×1','흑요석 ×2','밧줄 ×1'],effects:['전투 사용 가능'],tip:'흑요석 2개 소모가 비효율적. 흑요석 창 2개를 만드는 게 낫습니다.',desc:'흑요석 2개를 박은 아즈텍 스타일 도끼. 비추천.'},
+  {id:20,cat:'spear',tier:'early',name:'약한 창',mats:['긴 나뭇가지 ×1'],effects:['투척 가능','즉시 제작'],tip:'재료 하나로 긴급 상황에 즉시 제작 가능.',desc:'긴 나뭇가지 하나로 만드는 최간단 창.'},
+  {id:21,cat:'spear',tier:'early',name:'대나무 창',mats:['대나무 ×1'],effects:['약한 창보다 높은 내구도'],tip:'대나무 지역 진입 후 여러 개 제작해 연속 투창 전술 활용.',desc:'대나무로 만드는 창.'},
+  {id:22,cat:'spear',tier:'early',name:'돌 창',mats:['긴 나뭇가지 ×1','날카로운 돌 ×1','밧줄 ×1'],effects:['투척 후 회수 가능','재규어 대응'],tip:'여러 개 들고 원거리 전투 위주로 플레이하면 효율적.',desc:'돌 날 장착 창. 근접·원거리 겸용 초반 주력 무기.'},
+  {id:23,cat:'spear',tier:'mid',name:'네 갈래 창',mats:['긴 나뭇가지 ×1','날카로운 돌 ×4','밧줄 ×1'],effects:['물고기 사냥 특화'],tip:'물고기 사냥에 매우 유용. 강가 단백질 확보.',desc:'네 개의 날을 박은 창. 물고기 사냥 특화.'},
+  {id:24,cat:'spear',tier:'mid',name:'뼈 창',mats:['긴 나뭇가지 ×1','뼈 ×1','밧줄 ×1'],effects:['중반 가성비 창'],tip:'돌 창에서 자연스러운 업그레이드.',desc:'동물 뼈로 날을 만든 창.'},
+  {id:25,cat:'spear',tier:'late',name:'흑요석 창',mats:['긴 나뭇가지 ×1','흑요석 ×1','밧줄 ×1'],effects:['강력한 투척 데미지'],tip:'아즈텍 도끼 대신 흑요석 창을 만드는 게 훨씬 실용적.',desc:'흑요석 날 고급 창. 원거리 투척 데미지 최강.'},
+  {id:26,cat:'spear',tier:'late',name:'금속 창',mats:['금속 칼 ×1','긴 나뭇가지 ×1','밧줄 ×1'],effects:['게임 최강 근접 무기'],tip:'금속 칼 선제작 후 제작 가능. 게임 최강 근접 무기.',desc:'금속 칼을 장착한 창. 게임 최고 성능 근접 무기.'},
+  {id:27,cat:'ranged',tier:'mid',name:'활',mats:['긴 나뭇가지 ×1','밧줄 ×1'],effects:['원거리 사격'],tip:'지형 이점이 있을 때나 멀티 지원 사격 용도로 유용.',desc:'원거리 무기. 화살 별도 제작 필요.'},
+  {id:28,cat:'ranged',tier:'mid',name:'화살',mats:['작은 나뭇가지 ×1','날카로운 돌 ×1','밧줄 ×1','깃털 ×2'],effects:['활에 장착하여 사격'],tip:'깃털은 새 사냥으로 획득. 화살은 항상 회수하세요.',desc:'활에 사용하는 화살.'},
+  {id:29,cat:'ranged',tier:'late',name:'금속 화살',mats:['작은 나뭇가지 ×1','금속 화살 주물 ×1','밧줄 ×1','깃털 ×2'],effects:['높은 관통력'],tip:'금속 제련 후 업그레이드 추천.',desc:'금속 촉을 장착한 강화 화살.'},
+  {id:30,cat:'ranged',tier:'mid',name:'바람총',mats:['긴 대나무 가지 ×1','밧줄 ×2'],effects:['무소음 원거리 공격'],tip:'독 다트와 함께 사용하면 맹수도 처치 가능.',desc:'대나무 취관. 독 다트와 조합 시 강력.'},
+  {id:31,cat:'ranged',tier:'mid',name:'미완성 다트',mats:['작은 나뭇가지 ×1','깃털 ×1'],effects:['독 다트로 완성 가능'],tip:'독화살 개구리 스트레쳐에 드래그해 독을 묻혀야 완성.',desc:'바람총용 다트. 독화살 개구리로 독 입혀 완성.'},
+  {id:32,cat:'ranged',tier:'mid',name:'독 다트',mats:['미완성 다트 ×1','독화살 개구리 (살아있는 것)'],effects:['독 부여 원거리 공격','맹수 처치 가능'],tip:'개구리를 줍다 독에 걸릴 수 있으니 주의. 여러 개 미리 준비해두세요.',desc:'독화살 개구리 독을 묻힌 다트.'},
+  {id:33,cat:'bandage',tier:'early',name:'담배 드레싱',mats:['몰리네리아 붕대 ×1','담배 잎 ×1'],effects:['독 치료'],tip:'뱀·전갈·독거미 대비 항상 1~2장 소지 권장.',desc:'담배 잎 접목 붕대. 독 중독 치료 특화.'},
+  {id:34,cat:'bandage',tier:'early',name:'재 드레싱',mats:['몰리네리아 붕대 ×1','모닥불 재 ×1'],effects:['감염 없이 열상 치료'],tip:'고난이도 솔로에서 4장은 기본. 더러움이 높으면 효과 저하 주의.',desc:'재를 바른 소독 붕대.'},
+  {id:35,cat:'bandage',tier:'mid',name:'꿀 드레싱',mats:['몰리네리아 붕대 ×1','꿀 ×1'],effects:['감염 치료','더러움 무관'],tip:'아마조니아의 혼령 이후 재 드레싱보다 강력. 더러움 무관하게 감염 치료.',desc:'꿀을 바른 최고급 붕대.'},
+  {id:36,cat:'bandage',tier:'early',name:'백합 드레싱',mats:['몰리네리아 붕대 ×1','옥잠화 ×1'],effects:['항히스타민','해독 보조'],tip:'담배 드레싱이 없을 때 보조로 사용.',desc:'옥잠화 이용 붕대. 담배 드레싱 대비 효율 낮음.'},
+  {id:37,cat:'bandage',tier:'late',name:'골리앗 드레싱',mats:['몰리네리아 붕대 ×1','골리앗 거미 시체 (태운 것) ×1'],effects:['감염 없이 상처 치료'],tip:'제작 난이도 대비 효율이 낮아 수집가용 아이템.',desc:'골리앗 거미 이용 특수 붕대. 비추천.'},
+  {id:38,cat:'armor',tier:'early',name:'나뭇잎 방어복',mats:['바나나 잎 ×1','밧줄 ×2'],effects:['발진·개미 피해 경감','1.2kg 최경량'],tip:'착용 시 개미집 근처에서 개미 포획 가능. 개미는 열상 봉합에 사용.',desc:'바나나 잎으로 만드는 최기본 방어구.'},
+  {id:39,cat:'armor',tier:'early',name:'나뭇가지 방어복',mats:['바나나 잎 ×1','밧줄 ×2','나뭇가지 ×3'],effects:['나뭇잎 방어복보다 내구도 향상'],tip:'뼈 방어복 전까지의 임시 방어구.',desc:'나뭇가지 보강 방어구.'},
+  {id:40,cat:'armor',tier:'mid',name:'대나무 방어복',mats:['바나나 잎 ×1','밧줄 ×2','대나무 가지 ×3'],effects:['나뭇가지 방어복과 동일 방어력'],tip:'시작 지점 근처 대나무가 없어 스토리 초반엔 만들기 어려움. 거의 스킵해도 무방.',desc:'대나무 보강 방어구. 나뭇가지 방어복과 성능 동일.'},
+  {id:41,cat:'armor',tier:'mid',name:'뼈 방어복',mats:['바나나 잎 ×1','밧줄 ×2','뼈 ×3'],effects:['찰과상·열상 완전 방어','실전 최주력 방어구'],tip:'이 단계부터 맹수·원주민 찰과상·열상을 완전히 막아줌. 이하 방어구 착용 의미 없음.',desc:'뼈 보강 방어구. 중반 최주력.'},
+  {id:42,cat:'armor',tier:'late',name:'아르마딜로 갑옷',mats:['바나나 잎 ×1','밧줄 ×2','아르마딜로 껍질 ×1'],effects:['뼈 방어복보다 높은 방어력'],tip:'아르마딜로는 특정 지역에만 서식. 뼈 방어복 다음 업그레이드 목표.',desc:'아르마딜로 껍질 고급 갑옷.'},
+  {id:43,cat:'armor',tier:'late',name:'금속 갑옷',mats:['바나나 잎 ×1','밧줄 ×2','금속 갑옷 주물 ×3'],effects:['최고 방어력','2.0kg 경량'],tip:'방호력 순: 금속 > 아르마딜로 > 뼈 > 나뭇가지. 금속이 무게도 가벼워 후반 최적.',desc:'금속 주물 최고급 갑옷.'},
+  {id:44,cat:'tool',tier:'early',name:'돌 곡괭이',mats:['돌 칼 ×1','나뭇가지 ×1','밧줄 ×1'],effects:['철광석 채굴 가능'],tip:'깡통(통조림)으로 금속 자원 대체 가능하므로 굳이 필수는 아님.',desc:'철광석 채굴 도구.'},
+  {id:45,cat:'tool',tier:'early',name:'덫 (스네어)',mats:['나뭇가지 ×3','리아나 덩굴 ×2'],effects:['소형 동물 자동 포획'],tip:'플레이어 활동 반경 내에 설치해야 작동. 너무 멀리 설치하면 빈 덫.',desc:'소형 동물 자동 포획 덫.'},
+  {id:46,cat:'tool',tier:'early',name:'횃불',mats:['나뭇가지 ×1','나무껍질 ×1'],effects:['이동 중 빛 확보'],tip:'동굴 탐험 시 필수. 약한 횃불보다 지속 시간이 길어요.',desc:'이동 중 빛을 확보하는 도구.'},
+  {id:47,cat:'tool',tier:'early',name:'약한 횃불',mats:['나뭇가지 ×1'],effects:['짧은 빛 확보'],tip:'재료 하나로 즉시 제작 가능한 응급 횃불.',desc:'나뭇가지 하나로 만드는 간이 횃불.'},
+];
+
+const FOOD=[
+  {id:101,safety:'safe',name:'바나나',desc:'초반 최고의 탄수화물 + 수분 보충원. 독성 없음.',effects:[{t:'탄수화물 +20, 수분 +10'},{t:'날것도 바로 먹어도 안전'}],tip:'시작 지점(수련 호수) 근처에 바나나 나무 두 그루가 있으니 게임 시작 직후 수확하세요.'},
+  {id:102,safety:'safe',name:'코코넛',desc:'수분과 탄수화물을 동시에 보충. 우수한 초반 식량.',effects:[{t:'수분 +25'},{t:'탄수화물 +15'}],tip:'코코넛 껍질로 물통을 만들 수 있어요.'},
+  {id:103,safety:'safe',name:'수련 잎 (끓인 것)',desc:'식중독을 완전 치료할 수 있는 유일한 아이템.',effects:[{t:'식중독 5스택 완전 치료'},{t:'부패하지 않아 상비 보관 가능'}],tip:'시작 지점 수련 호수 주변에서 구할 수 있어요. 반드시 미리 확보!'},
+  {id:104,safety:'safe',name:'그물버섯',desc:'가방 효율이 좋은 초반 탄수화물원.',effects:[{t:'탄수화물 +15 (끓이면 +30)'},{t:'인벤토리 효율 최상'}],tip:'흰 그물 무늬가 특징. 끓여 먹으면 탄수화물 +30.'},
+  {id:105,safety:'safe',name:'통조림 (캔)',desc:'유통기한 없는 최고의 비상식량.',effects:[{t:'탄수화물+단백질 복합 보충'},{t:'부패하지 않음'}],tip:'다 먹은 깡통은 녹여서 금속 자원으로 재활용 가능!'},
+  {id:106,safety:'safe',name:'고기 (익힌 것)',desc:'최고의 단백질원. 반드시 불에 익혀 섭취.',effects:[{t:'단백질 +30~50'},{t:'익히면 기생충·식중독 제거'}],tip:'연기가 날 때까지 충분히 익혀야 합니다. 날것은 절대 금지!'},
+  {id:107,safety:'caution',name:'카사바',desc:'탄수화물 식량이지만 가방 공간 효율이 낮음.',effects:[{t:'탄수화물 +15'},{t:'가방 공간 많이 차지'}],tip:'식량 부족 시 섭취 가능. 그물버섯이나 바나나를 우선 선택하세요.'},
+  {id:108,safety:'caution',name:'버섯 (주황색 소형)',desc:'기생충 치료 효과가 있는 특수 버섯.',effects:[{t:'기생충 스택 -1 감소'},{t:'먹어도 안전'}],tip:'기생충 감염 시 이 버섯을 찾아 먹으면 치료됩니다.'},
+  {id:109,safety:'caution',name:'버섯 (파란색 소형)',desc:'기생충 치료 효과가 강한 버섯.',effects:[{t:'기생충 스택 -2 감소'},{t:'먹어도 안전'}],tip:'주황색보다 치료 효과가 두 배. 기생충 감염 시 우선적으로 찾으세요.'},
+  {id:110,safety:'caution',name:'초록색 가시 열매',desc:'기생충 치료 효과가 있는 열매.',effects:[{t:'기생충 스택 -2 감소'},{t:'구충 효과 우수'}],tip:'바나나와 함께 투탑 경작 작물. 발견 시 위치를 기억해두세요.'},
+  {id:111,safety:'danger',name:'독성 버섯 (적색)',desc:'섭취 시 식중독 확정. 절대 금지.',effects:[{t:'식중독 발생',bad:true},{t:'체력·수분 손실',bad:true}],tip:'절대 먹지 마세요. 식중독 후 수련 잎 끓인 것으로 치료 필요.'},
+  {id:112,safety:'danger',name:'날고기',desc:'기생충·식중독의 주원인. 반드시 익혀서 섭취.',effects:[{t:'기생충 감염 위험',bad:true},{t:'식중독 발생 가능',bad:true}],tip:'아무리 배고파도 날고기는 절대 금지! 불을 피워 익혀 먹는 습관을 들이세요.'},
+  {id:113,safety:'danger',name:'더러운 물',desc:'정수 없이 마시면 기생충 1~4스택 확정 감염.',effects:[{t:'기생충 1~4스택 확정',bad:true},{t:'안전하지 않은 물도 확률적 감염',bad:true}],tip:'반드시 끓이거나 코코넛 물로 대체하세요.'},
+];
+
+const STATUS_ICONS={
+  laceration:`<svg viewBox="0 0 56 56" fill="none"><path d="M10 30 Q18 12 28 22 Q36 30 44 14" stroke="#e05555" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M10 34 Q18 16 28 26 Q36 34 44 18" stroke="#c08080" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="14" cy="32" r="3" fill="#e05555" opacity=".7"/><circle cx="28" cy="24" r="2.5" fill="#e05555" opacity=".6"/><circle cx="42" cy="16" r="2" fill="#e05555" opacity=".5"/></svg>`,
+  infection:`<svg viewBox="0 0 56 56" fill="none"><ellipse cx="28" cy="30" rx="14" ry="10" fill="#c08080" opacity=".4"/><ellipse cx="28" cy="30" rx="9" ry="6" fill="#e05555" opacity=".6"/><circle cx="22" cy="27" r="2.5" fill="#a03030"/><circle cx="32" cy="31" r="2" fill="#a03030"/><circle cx="27" cy="34" r="1.5" fill="#a03030"/><path d="M28 14 L28 20" stroke="#a03030" stroke-width="2" stroke-linecap="round"/><path d="M20 17 L23 22" stroke="#a03030" stroke-width="1.5" stroke-linecap="round"/><path d="M36 17 L33 22" stroke="#a03030" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  venom:`<svg viewBox="0 0 56 56" fill="none"><path d="M28 44 C16 44 10 36 14 26 C17 18 22 16 28 16 C34 16 39 18 42 26 C46 36 40 44 28 44Z" fill="#4caf6e" opacity=".2"/><path d="M24 28 Q28 22 32 28 Q28 38 24 28Z" fill="#2e7d4f" opacity=".8"/><circle cx="23" cy="24" r="2.5" fill="#2e7d4f"/><circle cx="33" cy="24" r="2.5" fill="#2e7d4f"/><path d="M26 44 L24 50 M30 44 L32 50" stroke="#2e7d4f" stroke-width="2" stroke-linecap="round"/></svg>`,
+  bleed:`<svg viewBox="0 0 56 56" fill="none"><path d="M28 12 Q34 20 34 28 C34 34 31 40 28 44 C25 40 22 34 22 28 C22 20 28 12 28 12Z" fill="#e05555" opacity=".8"/><circle cx="28" cy="32" r="6" fill="#a03030"/><path d="M24 38 L20 46" stroke="#e05555" stroke-width="2" stroke-linecap="round"/><path d="M32 38 L34 46" stroke="#e05555" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  dehydrate:`<svg viewBox="0 0 56 56" fill="none"><path d="M28 12 Q34 22 34 30 C34 37 31 44 28 44 C25 44 22 37 22 30 C22 22 28 12 28 12Z" fill="#6090c0" opacity=".2" stroke="#6090c0" stroke-width="1.5"/><line x1="20" y1="26" x2="36" y2="26" stroke="#6090c0" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M22 34 L28 30 L34 34" stroke="#3060a0" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`,
+  fracture:`<svg viewBox="0 0 56 56" fill="none"><rect x="23" y="10" width="10" height="36" rx="5" fill="#888" opacity=".4"/><path d="M23 28 L20 24 L24 28 L20 32" stroke="#e05555" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M33 28 L36 24 L32 28 L36 32" stroke="#e05555" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M24 28 Q28 32 32 28" stroke="#e05555" stroke-width="2" stroke-linecap="round" fill="none"/></svg>`,
+  parasite:`<svg viewBox="0 0 56 56" fill="none"><ellipse cx="22" cy="28" rx="6" ry="3" fill="#c07820" opacity=".7" transform="rotate(-20 22 28)"/><ellipse cx="34" cy="24" rx="5" ry="2.5" fill="#c07820" opacity=".6" transform="rotate(15 34 24)"/><ellipse cx="28" cy="36" rx="5.5" ry="2.5" fill="#c07820" opacity=".5" transform="rotate(-10 28 36)"/><circle cx="18" cy="26" r="2.5" fill="#854f0b"/><circle cx="30" cy="22" r="2" fill="#854f0b"/><circle cx="24" cy="37" r="2" fill="#854f0b"/></svg>`,
+  poison:`<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="14" fill="#e6a030" opacity=".1" stroke="#e6a030" stroke-width="1"/><path d="M22 22 Q24 30 28 28 Q32 26 34 34" stroke="#c07820" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="22" cy="20" r="3" fill="#e6a030" opacity=".8"/><path d="M20 32 L18 38" stroke="#e6a030" stroke-width="2" stroke-linecap="round"/><path d="M34 30 L36 36" stroke="#e6a030" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  fever:`<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="32" r="8" fill="#e6a030" opacity=".6"/><rect x="25" y="12" width="6" height="24" rx="3" fill="#e6a030" opacity=".5"/><circle cx="28" cy="36" r="4" fill="#c07820"/><path d="M14 22 L10 18 M42 22 L46 18" stroke="#e6a030" stroke-width="2" stroke-linecap="round"/></svg>`,
+  leech:`<svg viewBox="0 0 56 56" fill="none"><ellipse cx="20" cy="26" rx="7" ry="3.5" fill="#666" opacity=".7" transform="rotate(-15 20 26)"/><ellipse cx="34" cy="30" rx="6" ry="3" fill="#666" opacity=".6" transform="rotate(10 34 30)"/><ellipse cx="26" cy="38" rx="6.5" ry="3" fill="#444" opacity=".7" transform="rotate(-5 26 38)"/><circle cx="14" cy="24" r="2" fill="#333"/><circle cx="28" cy="27" r="2" fill="#333"/></svg>`,
+  rash:`<svg viewBox="0 0 56 56" fill="none"><circle cx="22" cy="26" r="4" fill="#e08050" opacity=".7"/><circle cx="30" cy="22" r="3.5" fill="#e08050" opacity=".6"/><circle cx="34" cy="32" r="4" fill="#c06030" opacity=".6"/><circle cx="24" cy="34" r="3" fill="#c06030" opacity=".5"/><circle cx="28" cy="28" r="3" fill="#e08050" opacity=".8"/></svg>`,
+  scratch:`<svg viewBox="0 0 56 56" fill="none"><path d="M16 28 L26 22 L32 30 L40 24" stroke="#4caf6e" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M18 32 L28 26 L34 34 L42 28" stroke="#2e7d4f" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".5"/><circle cx="26" cy="22" r="2" fill="#2e7d4f" opacity=".6"/></svg>`,
+  sanity:`<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="26" r="12" fill="#7060d0" opacity=".15" stroke="#7060d0" stroke-width="1"/><circle cx="24" cy="24" r="2.5" fill="#5040a0"/><circle cx="32" cy="24" r="2.5" fill="#5040a0"/><path d="M22 32 Q28 36 34 32" stroke="#5040a0" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M20 14 L16 10 M36 14 L40 10" stroke="#7060d0" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/></svg>`,
+  insomnia:`<svg viewBox="0 0 56 56" fill="none"><path d="M20 28 C20 20 28 14 36 18 C28 18 22 24 22 32 C22 38 26 43 32 44 C24 44 20 37 20 28Z" fill="#8070c0" opacity=".5"/><circle cx="38" cy="16" r="4" fill="#5040a0" opacity=".5"/><path d="M30 22 L44 22 M36 16 L44 24" stroke="#7060d0" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+};
+
+const STATUS=[
+  {id:201,sev:'danger',name:'열상',en:'Laceration',icon:'laceration',cause:'맹수·원주민 공격, 낙하',treat:'재 붕대 또는 꿀 붕대',symptoms:['체력 급격 감소','출혈 지속','방치 시 즉시 감염'],treatments:['재 붕대 — 감염 예방 포함','꿀 붕대 — 가장 효과적','개미 봉합 — 분별력 소폭 감소'],tip:'기본 몰리 붕대만으론 감염 예방 불가. 반드시 재 또는 꿀 붕대를 사용하세요.'},
+  {id:202,sev:'danger',name:'상처 감염',en:'Wound Infection',icon:'infection',cause:'상처 미처치, 더러운 손으로 붕대',treat:'구더기 + 재 붕대',symptoms:['발열 동반','체력 지속 감소','방치 시 사망'],treatments:['구더기를 감염 부위에 배치','이후 즉시 재 붕대 추가'],tip:'구더기는 야생 돼지 등의 시체에서 얻을 수 있어요.'},
+  {id:203,sev:'danger',name:'독 (중독)',en:'Venom',icon:'venom',cause:'독사·거미·전갈·독개구리',treat:'아마라 섭취 + 붕대',symptoms:['체력 급속 감소','발열 동반','독 상처 별도 발생'],treatments:['아마라 식물 즉시 섭취','독 상처에 붕대 처치'],tip:'독사 서식 지역 이동 시 발 밑을 항상 주시하세요.'},
+  {id:204,sev:'danger',name:'출혈',en:'Bleeding',icon:'bleed',cause:'열상·골절·독 상처',treat:'붕대 즉시 처치',symptoms:['초당 체력 지속 감소','방치 시 기절·사망'],treatments:['몰리 붕대 — 최소 응급','리아나 덩굴 — 재료 없을 때 임시'],tip:'재료가 없으면 리아나 덩굴이라도 즉시 감으세요.'},
+  {id:205,sev:'danger',name:'탈수',en:'Dehydration',icon:'dehydrate',cause:'수분 보충 부족',treat:'코코넛 물·끓인 물 즉시',symptoms:['수분 0 → 체력 급감','2~3분 내 사망 가능'],treatments:['코코넛 물 — 바로 마셔도 안전','수련 잎 끓인 물 — 식중독 치료 겸용'],tip:'탈수는 가장 빠른 사망 원인. 항상 물 여유분을 들고 다니세요.'},
+  {id:206,sev:'danger',name:'골절',en:'Bone Fracture',icon:'fracture',cause:'높은 곳에서 낙하',treat:'부목 제작 및 고정',symptoms:['이동 속도 대폭 감소','통증으로 집중력 저하'],treatments:['나뭇가지 + 천 조각 → 부목','부목 후 쉼터에서 안정'],tip:'낙하 시 즉시 부목을 만들어야 해요.'},
+  {id:207,sev:'caution',name:'기생충 감염',en:'Parasites',icon:'parasite',cause:'더러운 물, 더러운 손으로 식사',treat:'구충 버섯·열매 섭취',symptoms:['3대 영양소 급속 소모','지속적인 체력·기력 저하'],treatments:['주황 버섯 — 기생충 -1스택','파란 버섯 — 기생충 -2스택','초록 가시 열매 — -2스택'],tip:'더러운 손으로 식사하면 기생충 확률 상승. 항상 손을 씻고 식사하세요.'},
+  {id:208,sev:'caution',name:'식중독',en:'Food Poisoning',icon:'poison',cause:'독성 식물·상한 음식 섭취',treat:'수련 잎 끓인 물 (완치)',symptoms:['영양·수분 빠르게 감소','최대 5스택 누적'],treatments:['수련 잎 끓인 물 — 5스택 완전 치료','뼈 수프 — 3스택 감소'],tip:'수련 잎이 5스택 식중독의 유일한 완전 치료제.'},
+  {id:209,sev:'caution',name:'발열',en:'Fever',icon:'fever',cause:'독·상처 감염 후 발생',treat:'아마라 식물 + 수분 보충',symptoms:['수분 급격 감소','분별력 저하 동반'],treatments:['아마라 식물 섭취 — 해열 효과','좋은 침대에서 수면','물 자주 섭취'],tip:'아마라가 없다면 물을 최대한 자주 마시고 편안한 수면을 취하세요.'},
+  {id:210,sev:'caution',name:'거머리',en:'Leeches',icon:'leech',cause:'숲·물가 이동 중 피부 부착',treat:'C키로 신체 확인 후 제거',symptoms:['체력 서서히 감소','분별력 영향'],treatments:['C키 신체 점검 → 커서로 직접 제거'],tip:'숲을 헤치고 다닌 후에는 반드시 C키로 몸 전체를 확인하세요.'},
+  {id:211,sev:'caution',name:'발진',en:'Rash',icon:'rash',cause:'개미집·벌집 근처 통과',treat:'항히스타민 식물·시간 경과',symptoms:['분별력 서서히 감소','가려움 유발'],treatments:['자연 회복 — 시간이 지나면 사라짐','방어구 착용으로 예방'],tip:'발진은 방치해도 사라지지만 분별력을 갉아먹어요.'},
+  {id:212,sev:'mild',name:'찰과상',en:'Scratch',icon:'scratch',cause:'작은 부상, 가시, 가벼운 충격',treat:'기본 붕대 (몰리네리아)',symptoms:['체력 서서히 감소','방치 시 감염 가능'],treatments:['몰리네리아 붕대 — 기본 치료','리아나 덩굴 — 임시 처치'],tip:'찰과상은 몰리 붕대로 즉시 처치하면 됩니다.'},
+  {id:213,sev:'mild',name:'분별력 저하',en:'Low Sanity',icon:'sanity',cause:'거머리·발진·불면증·부상 누적',treat:'모닥불·요리 고기·수면',symptoms:['40 이하: 환청·환시','10 이하: 환영 원주민 출현'],treatments:['모닥불 근처 대기','요리한 고기 섭취','침대에서 수면'],tip:'분별력이 10 이하로 떨어지면 환영 원주민이 공격합니다.'},
+  {id:214,sev:'mild',name:'불면증',en:'Insomnia',icon:'insomnia',cause:'야외 수면 반복, 에너지 고갈',treat:'쉼터 안에서 수면',symptoms:['회복 효율 저하','분별력 함께 감소'],treatments:['나뭇잎 피신처 이상의 쉼터에서 수면'],tip:'땅바닥에서 자면 불면증 + 피부 벌레까지 생길 수 있어요.'},
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let craftCat='all', foodFilter='all', statusSev='all';
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════
+   CRAFT
+═══════════════════════════════════════════ */
+function initCraftFilters(){
+  const row=document.getElementById('craft-filters');
+  const cats=[['all','전체'],...Object.entries(CRAFT_CATS)];
+  row.innerHTML=cats.map(([k,v])=>`<button class="ftab${k==='all'?' active':''}" onclick="setCraftCat('${k}',this)">${v}</button>`).join('');
+}
+function setCraftCat(c,el){
+  craftCat=c;
+  document.querySelectorAll('#craft-filters .ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('craft-detail').classList.remove('open');
+  renderCraft();
+}
+function renderCraft(){
+  const q=document.getElementById('craft-search').value.toLowerCase();
+  const f=CRAFT.filter(d=>(craftCat==='all'||d.cat===craftCat)&&(!q||d.name.toLowerCase().includes(q)||d.mats.join(' ').toLowerCase().includes(q)||(d.desc&&d.desc.toLowerCase().includes(q))));
+  const list=document.getElementById('craft-list');
+  document.getElementById('craft-detail').classList.remove('open');
+  document.getElementById('craft-count').textContent=f.length+'개 조합법';
+  if(!f.length){list.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>검색 결과 없음</div>';return;}
+  list.innerHTML='<div class="grid">'+f.map(d=>`
+    <div class="card" onclick="showCraftDetail(${d.id})">
+      <div class="card-top">
+        <span class="badge ${CRAFT_CLS[d.cat]}">${CRAFT_CATS[d.cat]}</span>
+        <div class="tier-dot t-${d.tier}" title="${TIER[d.tier]}"></div>
+      </div>
+      <div class="card-name">${d.name}</div>
+      <div class="card-sub">${d.mats.join(' + ')}</div>
+    </div>`).join('')+'</div>';
+}
+function showCraftDetail(id){
+  const d=CRAFT.find(x=>x.id===id);
+  if(!d)return;
+  document.getElementById('craft-list').innerHTML='';
+  document.getElementById('craft-count').textContent='';
+  const el=document.getElementById('craft-detail');
+  el.innerHTML=`
+    <button class="back-btn" onclick="renderCraft()"><i class="ti ti-arrow-left"></i> 목록으로</button>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <span class="badge ${CRAFT_CLS[d.cat]}">${CRAFT_CATS[d.cat]}</span>
+      <span class="badge" style="background:var(--bg3);color:var(--text3)">${TIER[d.tier]}</span>
+    </div>
+    <div class="d-title">${d.name}</div>
+    <div class="divider"></div>
+    <div class="d-desc">${d.desc}</div>
+    <div class="dlabel">필요 재료</div>
+    <div class="mats">${d.mats.map(m=>`<span class="mat">${m}</span>`).join('')}</div>
+    <div class="dlabel">효과</div>
+    ${d.effects.map(e=>`<div class="eff-row"><i class="ti ti-check"></i>${e}</div>`).join('')}
+    ${d.tip?`<div class="tip-box"><i class="ti ti-bulb" style="color:var(--green);margin-right:6px;font-size:13px"></i>${d.tip}</div>`:''}
+  `;
+  el.classList.add('open');
+}
+
+/* ═══════════════════════════════════════════
+   FOOD
+═══════════════════════════════════════════ */
+const SAFETY_LABEL={safe:'안전',caution:'주의',danger:'위험'};
+const SAFETY_CLS={safe:'safe-b',caution:'caution-b',danger:'danger-b'};
+
+function initFoodFilters(){
+  const row=document.getElementById('food-filters');
+  row.innerHTML=[['all','전체'],['safe','안전'],['caution','주의'],['danger','위험']].map(([k,v])=>`<button class="ftab${k==='all'?' active':''}" onclick="setFoodFilter('${k}',this)">${v}</button>`).join('');
+}
+function setFoodFilter(f,el){
+  foodFilter=f;
+  document.querySelectorAll('#food-filters .ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('food-detail').classList.remove('open');
+  renderFood();
+}
+function renderFood(){
+  const q=document.getElementById('food-search').value.toLowerCase();
+  const f=FOOD.filter(d=>(foodFilter==='all'||d.safety===foodFilter)&&(!q||d.name.toLowerCase().includes(q)||d.desc.toLowerCase().includes(q)));
+  const list=document.getElementById('food-list');
+  document.getElementById('food-detail').classList.remove('open');
+  document.getElementById('food-count').textContent=f.length+'개 항목';
+  if(!f.length){list.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>검색 결과 없음</div>';return;}
+  list.innerHTML='<div class="grid">'+f.map(d=>`
+    <div class="card" onclick="showFoodDetail(${d.id})">
+      <div class="card-top">
+        <span class="badge b-food">음식·식물</span>
+        <span class="badge ${SAFETY_CLS[d.safety]}" style="margin-left:auto">${SAFETY_LABEL[d.safety]}</span>
+      </div>
+      <div class="card-name">${d.name}</div>
+      <div class="card-sub">${d.desc}</div>
+    </div>`).join('')+'</div>';
+}
+function showFoodDetail(id){
+  const d=FOOD.find(x=>x.id===id);
+  if(!d)return;
+  document.getElementById('food-list').innerHTML='';
+  document.getElementById('food-count').textContent='';
+  const el=document.getElementById('food-detail');
+  el.innerHTML=`
+    <button class="back-btn" onclick="renderFood()"><i class="ti ti-arrow-left"></i> 목록으로</button>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span class="badge b-food">음식·식물</span>
+      <span class="badge ${SAFETY_CLS[d.safety]}">${SAFETY_LABEL[d.safety]}</span>
+    </div>
+    <div class="d-title">${d.name}</div>
+    <div class="divider"></div>
+    <div class="d-desc">${d.desc}</div>
+    <div class="dlabel">효과</div>
+    ${d.effects.map(e=>`<div class="eff-row${e.bad?' bad':''}"><i class="ti ti-${e.bad?'alert-circle':'check'}"></i>${e.t}</div>`).join('')}
+    ${d.tip?`<div class="tip-box"><i class="ti ti-bulb" style="color:var(--green);margin-right:6px;font-size:13px"></i>${d.tip}</div>`:''}
+  `;
+  el.classList.add('open');
+}
+
+/* ═══════════════════════════════════════════
+   STATUS
+═══════════════════════════════════════════ */
+const SEV_LABEL={danger:'즉시 위험',caution:'주의',mild:'경미'};
+const SEV_CLS={danger:'b-status-danger',caution:'b-status-caution',mild:'b-status-mild'};
+
+function initStatusFilters(){
+  const row=document.getElementById('status-filters');
+  row.innerHTML=[['all','전체'],['danger','즉시 위험'],['caution','주의'],['mild','경미']].map(([k,v])=>`<button class="ftab${k==='all'?' active':''}" onclick="setStatusSev('${k}',this)">${v}</button>`).join('');
+}
+function setStatusSev(s,el){
+  statusSev=s;
+  document.querySelectorAll('#status-filters .ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('status-detail').classList.remove('open');
+  renderStatus();
+}
+function renderStatus(){
+  const q=document.getElementById('status-search').value.toLowerCase();
+  const f=STATUS.filter(d=>(statusSev==='all'||d.sev===statusSev)&&(!q||d.name.toLowerCase().includes(q)||d.cause.toLowerCase().includes(q)||d.treat.toLowerCase().includes(q)));
+  const list=document.getElementById('status-list');
+  document.getElementById('status-detail').classList.remove('open');
+  document.getElementById('status-count').textContent=f.length+'개 상태이상';
+  if(!f.length){list.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>검색 결과 없음</div>';return;}
+  list.innerHTML='<div class="grid">'+f.map(d=>`
+    <div class="scard" data-sev="${d.sev}" onclick="showStatusDetail(${d.id})">
+      <div class="scard-icon" data-sev="${d.sev}">
+        ${STATUS_ICONS[d.icon]}
+        <span class="scard-icon-label">${d.en}</span>
+      </div>
+      <div class="scard-body">
+        <div class="scard-name">${d.name}</div>
+        <div class="scard-cause"><i class="ti ti-bolt" style="font-size:10px;margin-right:3px"></i>${d.cause}</div>
+        <div class="scard-treat"><i class="ti ti-first-aid-kit"></i>${d.treat}</div>
+      </div>
+    </div>`).join('')+'</div>';
+}
+function showStatusDetail(id){
+  const d=STATUS.find(x=>x.id===id);
+  if(!d)return;
+  document.getElementById('status-list').innerHTML='';
+  document.getElementById('status-count').textContent='';
+  const el=document.getElementById('status-detail');
+  el.innerHTML=`
+    <button class="back-btn" onclick="renderStatus()"><i class="ti ti-arrow-left"></i> 목록으로</button>
+    <div class="detail-hero" data-sev="${d.sev}">
+      ${STATUS_ICONS[d.icon]}
+      <div>
+        <div class="d-title" style="margin-bottom:2px">${d.name}</div>
+        <span class="badge ${SEV_CLS[d.sev]}">${SEV_LABEL[d.sev]}</span>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px"><i class="ti ti-bolt" style="font-size:12px;margin-right:4px"></i>원인: ${d.cause}</div>
+    <div class="divider"></div>
+    <div class="dlabel">증상</div>
+    ${d.symptoms.map(s=>`<div class="eff-row bad"><i class="ti ti-alert-circle"></i>${s}</div>`).join('')}
+    <div class="dlabel">치료법</div>
+    ${d.treatments.map(t=>`<div class="eff-row"><i class="ti ti-first-aid-kit"></i>${t}</div>`).join('')}
+    ${d.tip?`<div class="tip-box"><i class="ti ti-bulb" style="color:var(--green);margin-right:6px;font-size:13px"></i>${d.tip}</div>`:''}
+  `;
+  el.classList.add('open');
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+initCraftFilters();
+initFoodFilters();
+initStatusFilters();
+renderCraft();
+renderFood();
+renderStatus();
+</script>
+</body>
+</html>
