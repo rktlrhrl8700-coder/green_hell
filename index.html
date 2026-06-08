@@ -170,6 +170,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     <button class="nav-tab active" onclick="showPage('craft',this)">⚒ 조합법</button>
     <button class="nav-tab" onclick="showPage('food',this)">🌿 음식</button>
     <button class="nav-tab" onclick="showPage('status',this)">🩹 상태이상</button>
+    <button class="nav-tab" onclick="showPage('map',this)">📍 아이템 위치</button>
   </div>
 </nav>
 
@@ -195,6 +196,19 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div id="food-count" class="count-line"></div>
   <div id="food-list"></div>
   <div id="food-detail" class="detail"></div>
+</div>
+
+
+<!-- ════ 아이템 위치 ════ -->
+<div id="page-map" class="page">
+  <div class="search-wrap">
+    <i class="ti ti-search"></i>
+    <input id="map-search" type="text" placeholder="아이템, 지역, 좌표 검색..." oninput="renderMap()"/>
+  </div>
+  <div class="filter-row" id="map-filters"></div>
+  <div id="map-count" class="count-line"></div>
+  <div id="map-list"></div>
+  <div id="map-detail" class="detail"></div>
 </div>
 
 <!-- ════ 상태이상 ════ -->
@@ -517,6 +531,191 @@ function showStatusDetail(id){
     <div class="dlabel">치료법</div>
     ${d.treatments.map(t=>`<div class="eff-row"><i class="ti ti-first-aid-kit"></i>${t}</div>`).join('')}
     ${d.tip?`<div class="tip-box"><i class="ti ti-bulb" style="color:var(--green);margin-right:6px;font-size:13px"></i>${d.tip}</div>`:''}
+  `;
+  el.classList.add('open');
+}
+
+
+/* ═══════════════════════════════════════════
+   MAP / 아이템 위치
+═══════════════════════════════════════════ */
+const MAP_CATS={all:'전체',recipe:'레시피',landmark:'주요 거점',resource:'자원·광물',food:'식물·식량',special:'특수 아이템'};
+const MAP_CAT_CLS={recipe:'b-bandage',resource:'b-tool',food:'b-food',special:'b-ranged',landmark:'b-armor'};
+
+const MAP_DATA=[
+  /* ── 레시피·물건 획득 좌표 ── */
+  {id:1,cat:'recipe',name:'덫 설치 레시피',coord:'40W 19S',
+   region:'스토리 맵 북부',
+   desc:'아르마딜로 등 동물을 잡을 수 있는 덫 설치 레시피 획득 가능.',
+   items:['덫 설치 레시피'],
+   tip:'아르마딜로 껍질(방어복 재료) 확보를 위한 덫 레시피. 우선순위 높음.'},
+  {id:2,cat:'special',name:'갈고리·물통·초코바·약',coord:'44W 17S',
+   region:'스토리 맵 북서부 (메인 베이스)',
+   desc:'갈고리, 물통, 초코바, 약 등 현대 아이템 다수 획득 가능.',
+   items:['갈고리','물통','초코바','약'],
+   tip:'3번 지도 획득 지점이기도 함. 스토리 후반 핵심 거점.'},
+  {id:3,cat:'recipe',name:'레시피 다수 (지도 포함)',coord:'50W 27S',
+   region:'스토리 맵 서부',
+   desc:'지도·대나무잎 물 채집기·냄비·초코바·주스·뼈갈레시피·그릴받침대 레시피 획득.',
+   items:['지도','대나무잎 물 채집기 레시피','냄비 레시피','초코바','주스','뼈갈 레시피','그릴받침대 레시피'],
+   tip:'레시피를 한꺼번에 다수 획득할 수 있는 효율적인 지점.'},
+  {id:4,cat:'recipe',name:'건조대·포획·뼈갈 레시피',coord:'46W 26S',
+   region:'스토리 맵 중서부',
+   desc:'건조대 레시피, 포획 레시피, 뼈갈 레시피 획득 가능.',
+   items:['건조대 레시피','포획 레시피','뼈갈 레시피'],
+   tip:'동물 포획 및 식량 보존 관련 레시피. 중반 이후 거점 운영에 필수.'},
+  {id:5,cat:'recipe',name:'훈제·활 레시피',coord:'52W 17S',
+   region:'스토리 맵 북서부',
+   desc:'훈제 레시피, 활 레시피 획득 가능.',
+   items:['훈제 레시피','활 레시피'],
+   tip:'식량 보존(훈제)과 원거리 전투(활) 모두 중반 핵심 레시피.'},
+  {id:6,cat:'recipe',name:'대나무 물채집기·네갈래창·물고기덫 레시피',coord:'50W 19S',
+   region:'스토리 맵 북서부',
+   desc:'대나무 물 채집기, 네갈래창, 물고기 덫 설치 레시피 획득.',
+   items:['대나무 물 채집기 레시피','네갈래창 레시피','물고기 덫 설치 레시피'],
+   tip:'수분 확보(물 채집기)와 식량 확보(물고기 덫)를 동시에 해결할 수 있는 핵심 레시피 지점.'},
+  {id:7,cat:'recipe',name:'대나무 중형 침대 레시피',coord:'53W 16S',
+   region:'스토리 맵 최북서',
+   desc:'대나무 중형 침대 레시피 획득. 수면 품질 향상으로 분별력 회복에 유리.',
+   items:['대나무 중형 침대 레시피'],
+   tip:'중형 침대는 기본 침대보다 분별력 회복 효율이 높음.'},
+  {id:8,cat:'recipe',name:'나무·대나무 침대 레시피',coord:'40W 23S',
+   region:'스토리 맵 북부',
+   desc:'나무 또는 대나무 침대 레시피 획득 가능.',
+   items:['나무 침대 레시피','대나무 침대 레시피'],
+   tip:'침대는 불면증 예방 및 분별력 회복의 핵심. 가능한 빨리 확보 권장.'},
+  {id:9,cat:'recipe',name:'무기받침대 레시피',coord:'47W 17S',
+   region:'스토리 맵 북부',
+   desc:'무기받침대 레시피 획득. 무기 보관 및 거점 관리에 유용.',
+   items:['무기받침대 레시피'],
+   tip:'거점을 꾸미고 무기를 효율적으로 관리할 수 있는 건축 레시피.'},
+
+  /* ── 철광석 동굴 ── */
+  {id:10,cat:'resource',name:'철광석 동굴 (철광석자리 5개)',coord:'48W 15S',
+   region:'스토리 맵 북부 동굴',
+   desc:'철광석 자리가 5개로 가장 많은 철광석 동굴. 금속 장비 제작의 핵심 채굴지.',
+   items:['철광석 x10 (자리당 2개씩)'],
+   tip:'돌 곡괭이보다 금속 곡괭이로 채광이 더 빠름. 동굴 내 전갈 출몰 주의.'},
+  {id:11,cat:'resource',name:'철광석 동굴',coord:'53W 17S',
+   region:'스토리 맵 북서부 동굴',
+   desc:'철광석 획득 가능한 동굴.',
+   items:['철광석'],
+   tip:'53W 16S 대나무 침대 레시피 지점과 가까워 동선을 묶어서 방문하면 효율적.'},
+  {id:12,cat:'resource',name:'철광석 동굴',coord:'52W 28S',
+   region:'스토리 맵 서부 동굴',
+   desc:'철광석 획득 가능한 동굴.',
+   items:['철광석'],
+   tip:'훈제·활 레시피(52W 17S)와 같은 W축선. 동선 묶어서 이동 가능.'},
+  {id:13,cat:'resource',name:'철광석 동굴',coord:'47W 29S',
+   region:'스토리 맵 중부 동굴',
+   desc:'철광석 획득 가능한 동굴. 수련 호수에서 비교적 접근하기 쉬운 동굴.',
+   items:['철광석'],
+   tip:'수련 호수(45W 32S)에서 북서쪽으로 이동하면 비교적 가까운 철광석 동굴.'},
+
+  /* ── 주요 거점 ── */
+  {id:14,cat:'landmark',name:'수련 호수 (스토리 시작점)',coord:'45W 32S',
+   region:'스토리 맵 중앙',
+   desc:'스토리 모드 고정 시작 지점. 포식 동물이 없고 자원이 풍부해 초반 거점으로 최적.',
+   items:['바나나','코코넛','수련화','버섯','벌집','송진','견과류','철광석(동굴 벽 2곳)'],
+   tip:'수련 호수 물은 기생충 0~2스택 위험. 끓여 마시거나 코파 홍고로 해독.'},
+  {id:15,cat:'landmark',name:'버려진 원주민 마을',coord:'46W 29S',
+   region:'수련 호수 북쪽',
+   desc:'아야화스카 관련 스토리 진행 거점. 다양한 자원과 설계도 획득 가능.',
+   items:['통조림 다수','설계도','원주민 무기 노획 가능'],
+   tip:'재규어·뱀 자주 출현. 창 2개 이상 + 방어구 착용 필수.'},
+  {id:16,cat:'landmark',name:'전복된 지프차',coord:'43W 30S',
+   region:'비포장 도로변',
+   desc:'타이어 자국 따라가면 발견. 운전석 조사 시 수통 획득.',
+   items:['수통 (스토리 모드)','갈고리 (서바이벌 모드)'],
+   tip:'비포장 도로(타이어 자국)를 따라 이동하면 자연스럽게 발견 가능.'},
+  {id:17,cat:'landmark',name:'에어필드 (비행장)',coord:'40W 25S',
+   region:'스토리 맵 북부',
+   desc:'2번 지도 획득 가능 지점. 현대 아이템과 통조림 다수.',
+   items:['2번 지도','통조림 다수','현대 의약품'],
+   tip:'원주민이 활발히 순찰하는 구역. 무장 완비 후 방문 권장.'},
+
+  /* ── 식물·자원 ── */
+  {id:18,cat:'food',name:'코파 홍고 (주황 버섯)',coord:'45W 32S 파란 원 지점',
+   region:'수련 호수 주변',
+   desc:'기생충 1스택 제거 + 탄수화물 소량. 초반 기생충 대처에 유용.',
+   items:['코파 홍고 버섯 (기생충 -1스택)'],
+   tip:'초반 끓이기 전 호수 물 마신 후 이 버섯으로 기생충 해독 가능.'},
+  {id:19,cat:'food',name:'수련화 (수련 잎)',coord:'45W 32S 호수',
+   region:'수련 호수 수면',
+   desc:'식중독 5스택 완전 치료 가능한 유일한 아이템.',
+   items:['수련 잎 (끓이면 식중독 완치)'],
+   tip:'시작 즉시 여러 장 채취해 끓여두자. 비상시 식중독 유일 완치제.'},
+  {id:20,cat:'food',name:'바나나 나무',coord:'45W 33S',
+   region:'수련 호수 남쪽',
+   desc:'게임 시작 직후 가장 먼저 찾아야 할 식량. 수련 호수 근처 2그루.',
+   items:['바나나 (탄수화물+수분)'],
+   tip:'시작 후 가장 먼저 수확. 초반 탄수화물 확보의 핵심.'},
+  {id:21,cat:'resource',name:'대나무 숲',coord:'40W 35S',
+   region:'스토리 맵 서부',
+   desc:'대나무 밀집 지역. 대나무 무기·방어구·침대 제작 자원 대량 확보 가능.',
+   items:['대나무 (벌목 시 3개)','긴 대나무가지'],
+   tip:'2그루만 베어도 일반 나무 3그루 분의 기둥 확보. 나무보다 효율적.'},
+  {id:22,cat:'special',name:'독화살 개구리 서식지',coord:'강·연못 주변 전역',
+   region:'물가 근처',
+   desc:'독 다트 제작을 위한 독화살 개구리 포획 장소.',
+   items:['독화살 개구리 (독 다트 재료)'],
+   tip:'절대 맨손으로 만지지 말 것! 독 8스택 + 발열 1스택 즉시 발생.'},
+  {id:23,cat:'special',name:'아르마딜로 서식지',coord:'42W 36S',
+   region:'스토리 맵 남서부 초원',
+   desc:'아르마딜로 방어복 재료 획득 가능.',
+   items:['아르마딜로 껍질 (방어복 재료)'],
+   tip:'40W 19S 덫 레시피 먼저 획득 후 덫으로 포획하면 효율적.'},
+];
+
+let mapCat='all';
+function initMapFilters(){
+  const row=document.getElementById('map-filters');
+  const cats=[['all','전체'],['recipe','레시피'],['landmark','거점'],['resource','자원·광물'],['food','식물·식량'],['special','특수']];
+  row.innerHTML=cats.map(([k,v])=>`<button class="ftab${k==='all'?' active':''}" onclick="setMapCat('${k}',this)">${v}</button>`).join('');
+}
+function setMapCat(c,el){
+  mapCat=c;
+  document.querySelectorAll('#map-filters .ftab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('map-detail').classList.remove('open');
+  renderMap();
+}
+function renderMap(){
+  const q=document.getElementById('map-search').value.toLowerCase();
+  const filtered=MAP_DATA.filter(d=>(mapCat==='all'||d.cat===mapCat)&&(!q||d.name.toLowerCase().includes(q)||d.coord.toLowerCase().includes(q)||d.region.toLowerCase().includes(q)||d.items.join(' ').toLowerCase().includes(q)));
+  const list=document.getElementById('map-list');
+  document.getElementById('map-detail').classList.remove('open');
+  document.getElementById('map-count').textContent=filtered.length+'개 위치';
+  if(!filtered.length){list.innerHTML='<div class="empty"><i class="ti ti-search-off" style="font-size:28px;display:block;margin-bottom:8px"></i>검색 결과 없음</div>';return;}
+  list.innerHTML='<div class="grid">'+filtered.map(d=>`
+    <div class="card" onclick="showMapDetail(${d.id})">
+      <div class="card-top">
+        <span class="badge ${MAP_CAT_CLS[d.cat]}">${MAP_CATS[d.cat]}</span>
+        <span style="font-size:11px;font-weight:500;color:var(--green);margin-left:auto;flex-shrink:0">${d.coord}</span>
+      </div>
+      <div class="card-name">${d.name}</div>
+      <div class="card-sub" style="color:var(--text3);font-size:11px"><i class="ti ti-map-pin" style="font-size:11px;margin-right:3px"></i>${d.region}</div>
+    </div>`).join('')+'</div>';
+}
+function showMapDetail(id){
+  const d=MAP_DATA.find(x=>x.id===id);
+  if(!d)return;
+  document.getElementById('map-list').innerHTML='';
+  document.getElementById('map-count').textContent='';
+  const el=document.getElementById('map-detail');
+  el.innerHTML=`
+    <button class="back-btn" onclick="renderMap()"><i class="ti ti-arrow-left"></i> 목록으로</button>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <span class="badge ${MAP_CAT_CLS[d.cat]}">${MAP_CATS[d.cat]}</span>
+      <span style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px 10px;font-size:12px;color:var(--green);font-weight:500"><i class="ti ti-map-pin" style="font-size:12px;margin-right:4px"></i>${d.coord}</span>
+    </div>
+    <div class="d-title">${d.name}</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px"><i class="ti ti-map" style="font-size:12px;margin-right:4px"></i>${d.region}</div>
+    <div class="divider"></div>
+    <div class="d-desc">${d.desc}</div>
+    <div class="dlabel">획득 가능 아이템</div>
+    ${d.items.map(i=>`<div class="eff-row"><i class="ti ti-package"></i>${i}</div>`).join('')}
+    ${d.tip?`<div class="tip-box"><i class="ti ti-bulb" style="color:var(--green);margin-right:6px;font-size:14px"></i>${d.tip}</div>`:''}
   `;
   el.classList.add('open');
 }
